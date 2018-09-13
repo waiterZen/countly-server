@@ -1,6 +1,7 @@
 var manager = require('../../../plugins/pluginManager.js'),
-	crypto = require('crypto');
-    
+    countlyUtils = require('../../../api/utils/utils'),
+    crypto = require('crypto');
+
 var myArgs = process.argv.slice(2);
 var db = manager.dbConnection();
 
@@ -34,7 +35,7 @@ if(myArgs[0] == "register" && myArgs[1] && myArgs[2]){
                 else{
                     member = member.ops;
                     var a = {};
-                    a.api_key = md5Hash(member[0]._id + (new Date).getTime());
+                    a.api_key = md5Hash(member[0]._id + countlyUtils.randomString(256));
                     member[0].api_key =  a.api_key;
                     db.collection("members").update({_id:member[0]._id}, {$set:a}, function() {
                         console.log(member[0]);

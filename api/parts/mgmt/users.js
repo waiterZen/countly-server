@@ -2,6 +2,7 @@ var usersApi = {},
     common = require('./../../utils/common.js'),
     mail = require('./mail.js'),
     plugins = require('../../../plugins/pluginManager.js'),
+    countlyUtils = require('../../utils/utils'),
     crypto = require('crypto');
 
 (function (usersApi) {
@@ -181,7 +182,7 @@ var usersApi = {},
                 member = member.ops;
                 if (member && member.length && !err) {
 
-                    member[0].api_key = common.md5Hash(member[0]._id + (new Date().getTime()));
+                    member[0].api_key = common.md5Hash(member[0]._id + countlyUtils.randomString(256));
                     common.db.collection('members').update({ '_id': member[0]._id }, { $set: { api_key: member[0].api_key } }, function () { });
 
                     mail.sendToNewMember(member[0], passwordNoHash);

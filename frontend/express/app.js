@@ -29,6 +29,7 @@ var versionInfo = require('./version.info'),
     countlyMail = require('../../api/parts/mgmt/mail.js'),
     countlyStats = require('../../api/parts/data/stats.js'),
     countlyFs = require('../../api/utils/countlyFs.js'),
+    countlyUtils = require('../../api/utils/utils'),
     common = require('../../api/utils/common.js'),
     bruteforce = require('./libs/preventBruteforce.js'),
 	plugins = require('../../plugins/pluginManager.js'),
@@ -914,7 +915,8 @@ app.post(countlyConfig.path+'/setup', function (req, res, next) {
                         var options = {uri:"https://try.count.ly/s", method:"POST", timeout:4E3, json:{email:req.body.email, full_name:req.body.full_name, v:COUNTLY_VERSION, t:COUNTLY_TYPE}};
                         request(options, function(a, c, b) {
                             a = {};
-                            a.api_key = md5Hash(member[0]._id + (new Date).getTime());
+                            a.api_key = md5Hash(member[0]._id + countlyUtils.randomString(256));
+
                             b && (b.in_user_id && (a.in_user_id = b.in_user_id), b.in_user_hash && (a.in_user_hash = b.in_user_hash));
 
                             countlyDb.collection("members").update({_id:member[0]._id}, {$set:a}, function(err, mem) {
@@ -935,8 +937,7 @@ app.post(countlyConfig.path+'/setup', function (req, res, next) {
                         });
                     } else {
                         var a = {};
-                        a.api_key = md5Hash(member[0]._id + (new Date).getTime());
-
+                        a.api_key = md5Hash(member[0]._id + countlyUtils.randomString(256));
                         countlyDb.collection("members").update({_id:member[0]._id}, {$set:a}, function() {
                             req.session.uid = member[0]._id;
                             req.session.gadm = !0;

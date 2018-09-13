@@ -90,3 +90,26 @@ exports.decrypt = function(crypted, key, iv, algorithm, input_encoding, output_e
     decrypted += decipher.final(output_encoding);
     return decrypted;
 };
+
+/**
+* Generate random string
+* @param {number} length - characters length want to genearte
+* @returns {string} generated random string
+*/
+exports.randomString = function(length) {
+    const charSet= `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`;
+    const charSetLength = charSet.length;
+    const maxByte = 256 - (256 % charSetLength);
+    let string = '';
+    while (length > 0) {
+        let buf = crypto.randomBytes(Math.ceil(length * 256 / maxByte));
+        for (let i = 0; i < buf.length && length > 0; i++) {
+            const randomByte = buf.readUInt8(i);
+            if (randomByte < maxByte) {
+                string += charSet.charAt(randomByte % charSetLength);
+                length--;
+            }
+        }
+    }
+    return string;
+}
