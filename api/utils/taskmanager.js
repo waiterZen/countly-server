@@ -351,7 +351,7 @@ taskmanager.getResults = function(options, callback) {
     options.db = options.db || common.db;
     options.query = options.query || {};
     options.projection = options.projection || {data: 0};
-    options.db.collection("long_tasks").find(options.query, options.projection).toArray(callback);
+    options.db.collection("long_tasks").find(options.query, options.projection).sort({'start': -1}).toArray(callback);
 };
 
 /**
